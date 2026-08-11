@@ -1,0 +1,41 @@
+name: Bug report
+description: Something behaves differently from what the docs say
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do **not** report security issues here — see
+        [SECURITY.md](https://github.com/project-apricot/.github/blob/main/SECURITY.md).
+
+  - type: input
+    id: version
+    attributes:
+      label: Package and version
+      placeholder: ApricotFramework.CoreUtility 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime and OS
+      placeholder: .NET 10 on Ubuntu 24.04 x64
+    validations:
+      required: true
+
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: What you expected, and what happened
+      description: Include the exception and stack trace if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: The smallest code that shows the problem. A failing test is ideal.
+    validations:
+      required: false
