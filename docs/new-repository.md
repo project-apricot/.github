@@ -87,7 +87,7 @@ gh secret set NUGET_USER --repo project-apricot/REPO --body '<nuget.org profile 
 
 | Field | Value |
 | --- | --- |
-| Package Owner | you, or an org you are an active member of |
+| Package Owner | `project-apricot` — required, see below |
 | Repository Owner | `project-apricot` |
 | Repository | `REPO` |
 | Workflow File | `release.yml` — filename only, no path |
@@ -95,6 +95,10 @@ gh secret set NUGET_USER --repo project-apricot/REPO --body '<nuget.org profile 
 
 A new policy may be only **temporarily active for 7 days** until the first successful publish
 supplies GitHub's repo and owner IDs.
+
+**Package Owner must be `project-apricot`.** The `ApricotFramework.*` prefix is reserved to
+that owner and is not public, so nuget.org **rejects** a package under the prefix submitted by
+any other owner. Publishing as an individual account fails even with a valid policy.
 
 ## 9. Release
 

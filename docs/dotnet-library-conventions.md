@@ -113,3 +113,43 @@ Supported with no extra machinery:
 - `dotnet pack <solution>` packs all packable projects and the publish action pushes
   `./artifacts/*.nupkg` — no workflow change.
 - `PackageValidationBaselineVersion` is per package, set once each has a published version.
+
+Naming follows the ecosystem, not the source repo: `<Prefix>.<Library>.AspNetCore`, not
+`.Aspnet`. A package id can be changed for free until the first publish and never after — a
+rename post-publish is a *new* id forever, since nuget.org versions can be unlisted but not
+deleted.
+
+## Porting an existing library
+
+This props set is stricter than any code written before it, so a port that built fine in its
+old home will not build here. `TreatWarningsAsErrors=true` with
+`AnalysisLevel=latest-recommended` turns established idioms into hard failures, not style
+nits. Budget for it rather than being surprised by it.
+
+Seen so far, and both recur:
+
+- **CA1051** — `protected readonly` fields on a public type. Convert to a protected property,
+  or make the field private and expose only what callers need.
+- **CA1707** — underscores in externally visible names, which includes `public`/`protected`
+  `SCREAMING_CASE` consts. The `tests/.editorconfig` waiver is scoped to `tests/` and does
+  nothing for `src/`.
+
+Both rules are **visibility-scoped**, which is the practical lever: a private member trips
+neither. `core-utility`'s `private static readonly char[] ALL_CHARS` survives untouched for
+exactly that reason, while the same name on a public const would not.
+
+**Fix these before the first publish.** Reshaping public API is free while nothing depends on
+it and a major bump afterwards, so the port is the only cheap window — the same logic that
+makes the package id renameable only now.
+
+**Do not relax the root analyzer set to make a port compile.** The root props stays strict so
+new code is held to it. Where a finding genuinely must stand, the escape hatch is narrow: a
+`#pragma` at the site, or a `src/<Package>/.editorconfig` entry, with a comment naming the
+reason — the same shape as `tests/.editorconfig`.
+
+Two more that are policy, not analyzers:
+
+- **No per-file license headers.** The `LICENSE` file is the only notice; strip any headers the
+  source carried.
+- **`grep -rin <old-org-or-namespace>` over the whole tree must return nothing** before the PR.
+  It catches namespaces, package ids, feed URLs and doc links in one pass. Run it last.

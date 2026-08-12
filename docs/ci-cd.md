@@ -104,3 +104,7 @@ Consequence: `v*` tags cannot be protected, because force-moving `v1` is inheren
   last one.
 - **`.DS_Store` is not in the VisualStudio `.gitignore` template.**
 - **`dry_run` only previews the version** — it does not build or test.
+- **A preview is labelled from the next *inferred* version, not the current one.** `preview.yml`
+  takes `next_prerelease` from `version-semantic.yml`, so once a `feat:` has landed on top of
+  `v0.0.0` the first preview is `0.1.0-preview.<date>.<sha>`. There is no input that produces a
+  `0.0.x` preview — planning to "ship a 0.0.x preview first" does not work.
