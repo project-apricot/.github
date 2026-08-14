@@ -15,14 +15,8 @@ collection of small, focused, well-tested libraries, plus the CI/CD that ships t
   is traceable to a tag, a GitHub Release and the CI run that built it.
 - **Small surface.** New public API needs a reason, not just a use case.
 
-## Repositories
-
-| Repo | What it is |
-| --- | --- |
-| [core-utility](https://github.com/project-apricot/core-utility) | Zero-dependency .NET utilities: URL-safe hashing, random strings, URL helpers |
-| [shared-workflows](https://github.com/project-apricot/shared-workflows) | Reusable GitHub Actions workflows used across the org |
-
-More libraries are on the way, and more ecosystems after that.
+Every library lives in its own repository, listed below, each with its own docs. More are on the
+way, and more ecosystems after that.
 
 Everything is Apache-2.0. Contributions welcome —
 see [CONTRIBUTING](https://github.com/project-apricot/.github/blob/main/CONTRIBUTING.md).

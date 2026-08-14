@@ -20,8 +20,8 @@ bump and becomes a line in the release notes. CI enforces
 | `feat!:` | major |
 | `docs:` `test:` `chore:` `ci:` `refactor:` | none |
 
-Start the subject lowercase, no trailing period: `fix: return empty string for whitespace
-input`, not `fix: Fixed the bug.`
+No trailing period, and write the subject for someone reading the changelog: `fix: return empty
+string for whitespace input`, not `fix: Fixed the bug.`
 
 Also: warnings are errors in every repo, so the build must be clean. If your PR changes
 behaviour, update that repo's `docs/` **in the same PR** — that is why docs live next to the
