@@ -20,8 +20,13 @@ gh api -X PATCH repos/project-apricot/REPO \
   -F allow_merge_commit=false -F allow_rebase_merge=false -F allow_squash_merge=true \
   -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=BLANK \
   -F delete_branch_on_merge=true -F has_wiki=false \
-  -f homepage=https://projectapricot.dev
+  -f homepage=https://projectapricot.dev \
+  -f description="..."
 ```
+
+**Set the description here, not only in step 1.** A repo created in the UI, or from a template, never
+runs step 1's `--description`, so it ends up with none — and nothing later notices. Topics are not
+used.
 
 `PR_TITLE` matters: the default `COMMIT_OR_PR_TITLE` uses the *commit* message for
 single-commit PRs, so the title check could pass while a different message lands on `main` and
