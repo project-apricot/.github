@@ -25,8 +25,19 @@ gh api -X PATCH repos/project-apricot/REPO \
 ```
 
 **Set the description here, not only in step 1.** A repo created in the UI, or from a template, never
-runs step 1's `--description`, so it ends up with none — and nothing later notices. Topics are not
-used.
+runs step 1's `--description`, so it ends up with none — and nothing later notices.
+
+**Topics too**, in the same pass — nothing later notices a repo without them either:
+
+```bash
+gh repo edit project-apricot/REPO --add-topic csharp,dotnet,aspnetcore,<domain terms>
+```
+
+Derive them from the core package's `PackageTags`, which are already curated, then normalise to
+what GitHub accepts: lowercase, hyphens only, no dots — so `ado.net` becomes `ado-net` and
+`modelbinding` becomes `model-binding`. Drop the ones that would be on every repo and so
+distinguish nothing (`dependencyinjection`, `configuration`, `abstractions`). Seven or eight is
+plenty. Omit `aspnetcore` for a library that does not depend on it.
 
 `PR_TITLE` matters: the default `COMMIT_OR_PR_TITLE` uses the *commit* message for
 single-commit PRs, so the title check could pass while a different message lands on `main` and

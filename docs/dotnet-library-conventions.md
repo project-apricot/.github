@@ -50,7 +50,7 @@ Set `TargetFramework` (or `TargetFrameworks`) in the root props — one place.
   has no runtime for.
 - When multi-targeting, note a newer SDK can *build* an older TFM but not *run* its tests, and
   building an older-TFM **executable** needs that version's apphost pack — which hits test
-  projects, since xunit v3 builds as an exe.
+  projects, since an xunit v3 test project *is* an executable.
 
 ## Packaging metadata
 
@@ -76,8 +76,38 @@ being a ceiling: without it a new major SDK is picked up silently, and with
 
 ## Tests
 
-xunit v3 on Microsoft.Testing.Platform; versions centralised in `Directory.Packages.props`.
-Do not set `OutputType` — `xunit.v3` sets it. `dotnet test` runs every TFM in sequence.
+xunit v3 run natively on Microsoft.Testing.Platform; versions centralised in
+`Directory.Packages.props`. Do not set `OutputType` — `xunit.v3` sets it.
+
+**MTP is opted into per repo, in `global.json`:**
+
+```json
+{ "sdk": { … }, "test": { "runner": "Microsoft.Testing.Platform" } }
+```
+
+This is the only supported mechanism on the .NET 10 SDK. `TestingPlatformDotnetTestSupport` is the
+.NET 9-and-earlier property and is being removed; the `dotnet.config` runner section never shipped.
+The opt-in applies to the whole tree below it and is **all or nothing** — every test project
+`dotnet test` discovers must be MTP, or the run errors.
+
+The test stack is therefore `xunit.v3` + `coverlet.mtp` +
+`Microsoft.Testing.Extensions.TrxReport`. `Microsoft.NET.Test.Sdk` and
+`xunit.runner.visualstudio` stay only so an IDE can still run tests through VSTest; they are inert
+once `global.json` opts in. **`coverlet.collector` does not work under MTP** — it is a VSTest data
+collector. `coverlet.mtp` is the same project's MTP extension and is MIT, where Microsoft's
+`Microsoft.Testing.Extensions.CodeCoverage` ships under a proprietary licence file.
+
+MTP takes different reporting flags from VSTest: `--collect:"XPlat Code Coverage"` becomes
+`--coverlet --coverlet-output-format cobertura`, and `--logger trx` becomes `--report-trx`.
+`--results-directory`, `-c` and `--no-build` are unchanged.
+
+Two behaviours that differ from VSTest and will change what CI does:
+
+- **A run that discovers zero tests exits 8**, where VSTest exited 0. A filter that matches nothing
+  now fails the build.
+- **Do not pass `--report-trx-filename` for a multi-project run.** Each test assembly writes its own
+  report, so a fixed name makes them overwrite each other and the last one wins — a green build
+  publishing a fraction of its results. The default `{asm}_{tfm}_{arch}.trx` keeps them separate.
 
 **Anything a consumer might persist is pinned by golden-value tests** — a hash, an encoding, a
 generated identifier. If such a test fails that is the test working; do not update the
